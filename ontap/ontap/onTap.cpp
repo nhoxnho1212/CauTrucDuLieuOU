@@ -75,10 +75,14 @@ void printList()
 void printInfomationStudentGreaterMark5()
 {
 	node* cur = head;
-	while (cur != NULL && cur->data.mark>5.0)
+	while (cur != NULL)
 	{
-		PrintNode(cur);
-		cout << "\n-------------------------\n";
+		if (cur->data.mark > 5.0)
+		{
+			PrintNode(cur);
+			cout << "\n-------------------------\n";
+		}
+
 		cur = cur->next;
 	}
 }
@@ -101,27 +105,49 @@ void SortListLessToGreater()
 }
 
 // X is ID
-void PushBackX(char ID[],student NewData)
+bool PushBackX(char ID[], student NewData)
 {
 	node* cur = head;
-	while (cur->next != NULL || cur->data.ID==ID)
-	{
-		cur = cur->next;
-	}
-	if (cur->next == NULL)
+	if (strcmp(ID, cur->data.ID) == 0)
 	{
 		push(NewData);
-		return;
+		return true;
 	}
-	node* cur = head;
 	while (cur->next != NULL)
 	{
+		if (strcmp(ID, cur->data.ID) == 0)
+		{
+			break;
+		}
 		cur = cur->next;
 	}
+	if (strcmp(ID, cur->data.ID))
+		return false;
 	node* newNode = new node;
 	newNode->data = NewData;
 	newNode->next = cur->next;
 	cur->next = newNode;
+	return true;
+}
+
+
+//find X ID
+student findXid(char ID[])
+{
+	node* cur = head;
+	student NULLStudent;
+	NULLStudent.ID[0] = '\0';
+	while (cur != NULL )
+	{
+		if (strcmp(ID,cur->data.ID)==0)
+		{
+			return cur->data;
+			break;
+		}
+		cur = cur->next;
+	}
+	return NULLStudent;
+	
 	
 }
 //menu
@@ -130,6 +156,10 @@ int MENU()
 	cout<<"-----MENU---------\n"
 		<<"1. nhap danh sach sinh vien\n"
 		<<"2. Xuat danh sach sinh vien\n"
+		<<"3. Xuat danh sach sinh vien co diem trung binh > 5\n"
+		<<"4. tim kiem sinh vien co ma X\n"
+		<<"5. sap xep danh sach sinh vien theo diem trung binh\n"
+		<<"6. them 1 sinh vien sau sinh vien co ma X\n"
 		<<"9. xoa toan bo danh sach\n"
 		<<"10. thoat\n"
 		<<"\t\chon: ";
@@ -167,16 +197,37 @@ void APP()
 		case 3:
 		{
 			printInfomationStudentGreaterMark5();
+			system("pause");
 			break;
 		}
 		case 4:
 		{
+			cout << "Nhap ma so sinh vien them sau :";
+			char IDX[11];
+			cin >> IDX;
+			student find = findXid(IDX);
+			if (find.ID[0] == '\0')
+			{
+				cout << "khong tim thay!\n";
+			}
+			else
+			{
+				cout << "tim thay sinh vien\n";
+				node* pointer = new node;
+				pointer->data = find;
+				pointer->next = NULL;
+				PrintNode(pointer);
+				delete pointer;
+				
+			}
+			system("pause");
 			break;
 		}
 		case 5:
 		{
 			SortListLessToGreater();
 			cout << "sap xep thanh cong!\n";
+			system("pause");
 			break;
 		}
 		case 6:
@@ -184,11 +235,17 @@ void APP()
 			cout << "Nhap ma so sinh vien them sau :";
 			char IDX[11];
 			cin >> IDX;
-			IDX[11] = '\0';
+			
 			cout << "\n";
 			student Student = inputData();
-			PushBackX(IDX, Student);
-			cout << "them thanh cong!\n";
+			bool pushX=PushBackX(IDX, Student);
+			if (pushX)
+				cout << "them thanh cong!\n";
+			else
+			{
+				cout << "them that bai!\n";
+			}
+			system("pause");
 			break;
 		}
 		default:
